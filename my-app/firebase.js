@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 
 
 const firebaseConfig={
- piKey: "AIzaSyDkb59whr15PKsevljt5RnpFCeb70f24os",
+ apiKey: "AIzaSyDkb59whr15PKsevljt5RnpFCeb70f24os",
   authDomain: "buscamichi.firebaseapp.com",
   projectId: "buscamichi",
   storageBucket: "buscamichi.firebasestorage.app",

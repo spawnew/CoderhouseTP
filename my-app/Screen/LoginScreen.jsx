@@ -1,17 +1,10 @@
-// Importamos React y el hook 'useState'
+
 import React, { useState } from 'react';
-
-
 import { StyleSheet, Text, TextInput, View,  Button, } from 'react-native';
-
-
 import { auth } from '../firebase'; 
 
 
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 
 export default function LoginScreen() {
@@ -23,7 +16,7 @@ export default function LoginScreen() {
 
  
   const handleRegister = async () => {
-   s
+   
     if (email === '' || password === '') {
       setError("Completa todos los campos.");
       return; 

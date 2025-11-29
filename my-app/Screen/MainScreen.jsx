@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Importamos los componentes visuales de React Native
+
 import { 
   StyleSheet, 
   Text, 
@@ -9,16 +9,16 @@ import {
   Alert 
 } from 'react-native';
 
-// --- FIREBASE ---
+
 import { auth } from '../firebase'; 
 import { signOut } from 'firebase/auth';
 export default function MainScreen({ user }) {
 
-  // --- FUNCIÓNES ---
+
 
   const handleLogout = async () => {
     try {
-      // Llamamos a Firebase: "che Firebase, cierra la sesión actual"
+     
       await signOut(auth);
    
     } catch (err) {
@@ -27,7 +27,7 @@ export default function MainScreen({ user }) {
     }
   };
 
-  // --- RENDERIZADO (LO QUE SE VE) ---
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bienvenido! esta es la app con firebase</Text>
@@ -39,7 +39,7 @@ export default function MainScreen({ user }) {
   );
 };
 
-// --- ESTILOS ---
+
 
 const styles = StyleSheet.create({
   container: {

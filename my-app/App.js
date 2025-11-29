@@ -3,8 +3,8 @@ import React, {useState,useEffect} from 'react'
 import { SafeAreaView,StyleSheet,Text,View} from 'react-native'
 import{auth} from './firebase'
 import{onAuthStateChanged} from 'firebase/auth'
-import LoginScreen from './screens/LoginScreen'
-import MainScreen from './screens/MainScreen'
+import LoginScreen from './Screen/LoginScreen'
+import MainScreen from './Screen/MainScreen'
 
 
 export default function App(){
