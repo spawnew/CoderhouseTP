@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Button, Alert } from 'react-native';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 
-export default function MainScreen({ navigation, route }) {
+export default function MainScreen({ navigation }) {
   
   const handleLogout = async () => {
     try {
