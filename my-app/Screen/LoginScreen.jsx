@@ -1,30 +1,42 @@
 
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View,  Button, } from 'react-native';
+
+import { 
+  StyleSheet, 
+  Text, 
+  TextInput,
+  View, 
+  Button, 
+} from 'react-native';
+
+// --- FIREBASE ---
 import { auth } from '../firebase'; 
 
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword 
+} from 'firebase/auth';
 
 
 export default function LoginScreen() {
 
-
+ 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
- 
+
   const handleRegister = async () => {
    
     if (email === '' || password === '') {
-      setError("Completa todos los campos.");
+      setError("Por favor, completa ambos campos.");
       return; 
     }
     
     try {
       setError(null); 
-    
+   
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (err) {
       
@@ -36,13 +48,13 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     
     if (email === '' || password === '') {
-      setError("Completa todos los campos.")
+      setError("Por favor, completa ambos campos.");
       return;
     }
 
     try {
       setError(null); 
-
+    
       await signInWithEmailAndPassword(auth, email, password);
     
     } catch (err) {
@@ -50,7 +62,7 @@ export default function LoginScreen() {
     }
   };
 
-  // renderizado
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Pantalla de Login</Text>
@@ -63,8 +75,7 @@ export default function LoginScreen() {
         onChangeText={setEmail} 
         keyboardType="email-address" 
         autoCapitalize="none" 
-      />
-      
+        />
  
       <TextInput
         style={styles.input}
@@ -73,6 +84,7 @@ export default function LoginScreen() {
         onChangeText={setPassword} 
         secureTextEntry 
       />
+
 
       {error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -87,13 +99,14 @@ export default function LoginScreen() {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    backgroundColor: '#f0f0f0' 
+    backgroundColor: "#080808ff" 
   },
   title: {
     fontSize: 24,
