@@ -12,26 +12,27 @@ export default function FormScreen() {
   const [direccion, setDireccion] = useState("");
   const [foto, setFoto] = useState("");
 
-  const handleInsert = async () => {
-    try {
-      await db.execAsync(
-        "INSERT INTO items (name, tipo, color, direccion, foto) VALUES (?, ?, ?, ?, ?)",
-        [name, tipo, color, direccion, foto]
-      );
+const handleInsert = async () => {
+  try {
+    await db.runAsync(
+      "INSERT INTO items (name, tipo, color, direccion, foto) VALUES (?, ?, ?, ?, ?)",
+      [name, tipo, color, direccion, foto]
+    );
 
-      alert("Mascota guardada correctamente");
-      // limpiar formulario
-      setName("");
-      setTipo("");
-      setColor("");
-      setDireccion("");
-      setFoto("");
+    alert("Mascota guardada correctamente");
 
-    } catch (error) {
-      console.log(error);
-      alert("Error al guardar");
-    }
-  };
+    setName("");
+    setTipo("");
+    setColor("");
+    setDireccion("");
+    setFoto("");
+
+  } catch (error) {
+    console.log("ERROR INSERT:", error);
+    alert("Error al guardar");
+  }
+};
+  
 
   return (
     <View style={styles.container}>

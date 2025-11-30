@@ -33,6 +33,10 @@ const navigation = useNavigation();
       <Button
         title="Ir a Subir"
         onPress={() => navigation.navigate("Subir")} 
+          />
+            <Button
+        title="Ver Mascotas"
+              onPress={() => navigation.navigate("Ver")}
       />
     </View>
   );
