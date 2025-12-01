@@ -26,7 +26,7 @@ const VerScreen = () => {
 
 console.log(items);
     return (
-    <View>
+    <View style={styles.container}>
       
         {items.map((item) => (
                 <View key={item.id} style={styles.itemContainer}>
@@ -45,4 +45,8 @@ console.log(items);
 }
 export default VerScreen
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: "#032b10ff", alignItems: "center", padding: 20, justifyContent: "center" },
+    itemContainer: { backgroundColor: "#f7eaeaff", padding: 15, borderRadius: 8, marginBottom: 10, width: "100%" },
+    itemText: { fontSize: 16, marginBottom: 5  },
+})

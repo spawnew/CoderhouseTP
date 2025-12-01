@@ -36,8 +36,8 @@ const handleInsert = async () => {
 
   return (
     <View style={styles.container}>
-      <Text>Agregar Mascota</Text>
-
+      <Text style={styles.titulo}>Agregar Mascota</Text>
+     <View style={styles.formulario } >
       <TextInput 
         style={styles.input} 
         placeholder="Nombre" 
@@ -73,18 +73,24 @@ const handleInsert = async () => {
         onChangeText={setFoto} 
       />
 
-      <Button title="Guardar" onPress={handleInsert} />
-    </View>
-  );
+          <Button title="Guardar" onPress={handleInsert} />
+        
+      </View>
+      </View>
+      
+  )
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20, flex: 1 },
-  input: {
+  container: { flex:1, backgroundColor:"#032b10ff", alignItems:"center" , padding: 20, justifyContent: "center" },
+  formulario: { width: "100%" ,height:"50%", marginTop:20, backgroundColor:"#f7eaeaff", padding:15, borderRadius:8 },
+    input: {
     borderWidth: 1,
-    borderColor: "#999",
+    borderColor: "#020202ff",
     padding: 10,
     marginVertical: 8,
-    borderRadius: 6,
-  },
+        borderRadius: 6,
+    backgroundColor: "#f7eaeaff",
+    },
+    titulo: { fontSize: 24, fontWeight: "bold", marginBottom: 20, color:"#f7eaeaff" }
 });

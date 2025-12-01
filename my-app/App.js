@@ -6,6 +6,10 @@ import { auth } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import Navigation from './Navigation/Navigation';
 
+
+
+
+
 function InitDatabase() {
   const db = useSQLiteContext();
 
@@ -65,6 +69,7 @@ export  default function App() {
       <NavigationContainer>
       
         <Cargar />
+       
       </NavigationContainer>
     </SQLiteProvider>
   );

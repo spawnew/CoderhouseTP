@@ -14,7 +14,7 @@ export default function HomeScreen() {
 
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" ,backgroundColor: "#080808ff" },
+  container: { flex: 1, justifyContent: "center", alignItems: "center" , },
   title: { fontSize: 22, marginBottom: 10, color:"#f7eaeaff" },
   emailText: { fontSize: 16, marginBottom: 20 },
 
