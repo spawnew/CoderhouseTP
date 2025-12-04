@@ -5,7 +5,7 @@ import LoginScreen from '../Screen/LoginScreen';
 import MainScreen from '../Screen/MainScreen';
 import HomeScreen from '../Screen/HomeScreen';
 import SubirScreen from '../Screen/SubirScreen';
-
+import BuscarScreen from '../Screen/BuscarScreen';
 const Stack = createNativeStackNavigator();
 
 export default function Navigation({ user }) {
@@ -16,7 +16,8 @@ export default function Navigation({ user }) {
           <Stack.Screen name="Main" component={MainScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
                   <Stack.Screen name="Subir" component={SubirScreen} />
-                   <Stack.Screen name="Ver" component={VerScreen} />
+                  <Stack.Screen name="Ver" component={VerScreen} />
+                  <Stack.Screen name="Buscar" component={BuscarScreen} />
         </>
       ) : (
         <Stack.Screen name="Login" component={LoginScreen} />

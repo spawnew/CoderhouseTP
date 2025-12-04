@@ -47,6 +47,11 @@ const navigation = useNavigation();
         title="Cerrar Sesión" 
         onPress={handleLogout} 
         color="red" 
+              />
+                  <Button 
+        title="buscar mascota" 
+        onPress={() => navigation.navigate("Buscar")} 
+        color="red" 
       />
           </View>
            </View>
