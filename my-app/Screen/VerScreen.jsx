@@ -1,52 +1,73 @@
-import { StyleSheet, Text, View } from 'react-native'
-import { useSQLiteContext } from "expo-sqlite";
-import React, { useState } from 'react'
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { setPets } from '../redux/slices/petsSlice';
+import { useSQLiteContext } from 'expo-sqlite';
 
+export default function VerScreen() {
+  const dispatch = useDispatch();
+  const db = useSQLiteContext();
+  const { pets } = useSelector(state => state.pets);
+  const [loading, setLoading] = useState(true);
 
-const VerScreen = () => {
-  const db = useSQLiteContext();  
-  const [items, setItems] = useState([]);
+  useEffect(() => {
+    loadPets();
+  }, []);
 
-  const loadItems = async () => {
+  const loadPets = async () => {
     try {
-        const result = await db.getAllAsync("SELECT * FROM items");
-        console.log("Datos obtenidos:", result);
-      setItems(result); 
+      setLoading(true);
+      const result = await db.getAllAsync("SELECT * FROM items");
+      console.log("✅ Mascotas cargadas:", result);
+      dispatch(setPets(result || []));
     } catch (error) {
-      console.log("Error al obtener datos:", error);
+      console.log("❌ Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    loadItems();
-  }, []);
-
-  
-
-console.log(items);
+  if (loading) {
     return (
-    <View style={styles.container}>
-      
-        {items.map((item) => (
-                <View key={item.id} style={styles.itemContainer}>
-                    <Text style={styles.itemText}>Nombre: {item.name}</Text>
-                    <Text style={styles.itemText}>Tipo: {item.tipo}</Text>
-                </View>)
-            
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
 
-          
+  if (pets.length === 0) {
+    return (
+      <View style={styles.center}>
+        <Text>No hay mascotas</Text>
+      </View>
+    );
+  }
 
-
-            )
-        }
-    </View>
-            )
+  return (
+    <FlatList
+      data={pets}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <View style={styles.item}>
+          <Text style={styles.name}>🐾 {item.name}</Text>
+          <Text>Tipo: {item.tipo}</Text>
+          <Text>Color: {item.color}</Text>
+          <Text>Ubicación: {item.direccion}</Text>
+        </View>
+      )}
+      contentContainerStyle={styles.container}
+    />
+  );
 }
-export default VerScreen
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#032b10ff", alignItems: "center", padding: 20, justifyContent: "center" },
-    itemContainer: { backgroundColor: "#f7eaeaff", padding: 15, borderRadius: 8, marginBottom: 10, width: "100%" },
-    itemText: { fontSize: 16, marginBottom: 5  },
-})
+  container: { padding: 10 },
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  item: {
+    backgroundColor: '#f5f5f5',
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+    name: { fontSize: 18, fontWeight: 'bold' }
+});
