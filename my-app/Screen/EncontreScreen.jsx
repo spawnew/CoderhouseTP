@@ -87,10 +87,10 @@ export default function EncontreScreen() {
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <View style={styles.itemContainer}>
-          <Text >🐾 {item.name}</Text>
-          <Text > {item.direccion || "Sin ubicación"}</Text>
-          <Text >Tipo: {item.tipo}</Text>
-          <Text >Color: {item.color}</Text>
+          <Text style={styles.text} >🐾 {item.name}</Text>
+          <Text style={styles.text} > {item.direccion || "Sin ubicación"}</Text>
+          <Text style={styles.text} >Tipo: {item.tipo}</Text>
+          <Text style={styles.text}> Color: {item.color}</Text>
 
           <Button 
             title="ya la Encontré " 
@@ -155,8 +155,11 @@ const styles = StyleSheet.create({
     title: {
        fontWeight: 'bold',
     fontSize: 30,
+    },
+
+  text: {
+       fontWeight: 'bold',
+    fontSize: 15,
     }
-
-
   
 })

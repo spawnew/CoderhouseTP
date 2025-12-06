@@ -42,7 +42,7 @@ function DBInitializer() {
     const setupDB = async () => {
       try {
         console.log("📱 Inicializando base de datos...");
-
+        
         await db.execAsync(`
           CREATE TABLE IF NOT EXISTS items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,7 +57,7 @@ function DBInitializer() {
             createdAt TEXT
           );
         `);
-      
+        console.log("✅ Tabla items creada correctamente con todas las columnas");
       } catch (error) {
         console.log("❌ Error al crear tabla:", error);
       }
