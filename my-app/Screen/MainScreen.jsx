@@ -24,32 +24,21 @@ export default function MainScreen() {
       <View style={styles.buttonContainer}>
         <View style={styles.button}>
           <Button
-            title="Ir a Inicio"
+            title="Ir a Encontre 🐾"
             onPress={() => {
-              console.log("Navegando a Home...");
-              navigation.navigate("Home");
+          
+              navigation.navigate("encontre");
             }}
-            color="#007AFF"
+            color="#15d1dfff"
           />
         </View>
 
         <View style={styles.button}>
           <Button
-            title="Agregar Mascota"
+            title="Agregar Mascota 🐾"
             onPress={() => {
-              console.log("Navegando a Subir...");
+            
               navigation.navigate("Subir");
-            }}
-            color="#34C759"
-          />
-        </View>
-
-        <View style={styles.button}>
-          <Button
-            title="Ver Mascotas"
-            onPress={() => {
-              console.log("Navegando a Ver...");
-              navigation.navigate("Ver");
             }}
             color="#FF9500"
           />
@@ -57,18 +46,29 @@ export default function MainScreen() {
 
         <View style={styles.button}>
           <Button
-            title="Buscar Mascota"
+            title="Ver Mascotas 🐾"
+            onPress={() => {
+              console.log("Navegando a Ver...");
+              navigation.navigate("Ver");
+            }}
+            color="#1387e6ff"
+          />
+        </View>
+
+        <View style={styles.button}>
+          <Button
+            title="Buscar Mascota 🐾"
             onPress={() => {
               console.log("Navegando a Buscar...");
               navigation.navigate("Buscar");
             }}
-            color="#5856D6"
+            color="#11ca93ff"
           />
         </View>
 
         <View style={styles.buttonLogout}>
           <Button
-            title="Cerrar Sesión"
+            title="Cerrar Sesión 🐾"
             onPress={handleLogout}
             color="#FF3B30"
           />

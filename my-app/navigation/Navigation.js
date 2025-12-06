@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import VerScreen from '../Screen/VerScreen';
 import LoginScreen from '../Screen/LoginScreen';
 import MainScreen from '../Screen/MainScreen';
-import HomeScreen from '../Screen/HomeScreen';
+import EncontreScreen from '../Screen/EncontreScreen';
 import SubirScreen from '../Screen/SubirScreen';
 import BuscarScreen from '../Screen/BuscarScreen';
 
@@ -32,8 +32,8 @@ export default function Navigation({ user }) {
         options={{ animationEnabled: false }}
       />
       <Stack.Screen 
-        name="Home" 
-        component={HomeScreen}
+        name="encontre" 
+        component={EncontreScreen}
       />
       <Stack.Screen 
         name="Subir" 

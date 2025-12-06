@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
+import { useState, useEffect } from "react";
+import { View, TextInput, Button, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform, Text } from "react-native";
 import { useDispatch } from "react-redux";
 import { addPet } from "../redux/slices/petsSlice";
 import { useSQLiteContext } from "expo-sqlite";
+import * as Location from 'expo-location';
 
 export default function SubirScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -12,18 +13,61 @@ export default function SubirScreen({ navigation }) {
   const [tipo, setTipo] = useState("");
   const [color, setColor] = useState("");
   const [direccion, setDireccion] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [loading, setLoading] = useState(false);
+  const [gettingLocation, setGettingLocation] = useState(false);
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  const getLocation = async () => {
+    try {
+      setGettingLocation(true);
+      console.log("📍 Solicitando permisos de ubicación...");
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert('Permiso denegado', 'Se necesita acceso a la ubicación para reportar mascotas');
+        setGettingLocation(false);
+        return;
+      }
+
+      console.log("📍 Obteniendo ubicación actual...");
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      const lat = currentLocation.coords.latitude.toString();
+      const lon = currentLocation.coords.longitude.toString();
+
+      console.log("✅ Ubicación obtenida - Lat:", lat, "Lon:", lon);
+      setLatitude(lat);
+      setLongitude(lon);
+      setGettingLocation(false);
+
+    } catch (error) {
+      console.log("❌ Error al obtener ubicación:", error);
+      Alert.alert('Error', 'No se pudo obtener la ubicación: ' + error.message);
+      setGettingLocation(false);
+    }
+  };
 
   const handleSave = async () => {
-    // Validar que db esté disponible
     if (!db) {
       Alert.alert("Error", "La base de datos no está disponible");
       return;
     }
 
-    // Validar campos
-    if (!name.trim() || !tipo.trim() || !color.trim() || !direccion.trim()) {
+    if (!name.trim() || !tipo.trim() || !color.trim()) {
       Alert.alert("Error", "Por favor completa todos los campos");
+      return;
+    }
+
+    if (!latitude || !longitude) {
+      Alert.alert("Error", "Se requiere la ubicación. Presiona 'Obtener Mi Ubicación'");
       return;
     }
 
@@ -31,32 +75,39 @@ export default function SubirScreen({ navigation }) {
     try {
       console.log("💾 Guardando mascota en SQLite...");
       
-      // Insertar en SQLite
+      // Guardar coordenadas como string
+      const locationString = `${latitude},${longitude}`;
+      
+      // Insertar en BD
       await db.runAsync(
-        "INSERT INTO items (name, tipo, color, direccion) VALUES (?, ?, ?, ?)",
-        [name.trim(), tipo.trim(), color.trim(), direccion.trim()]
+        "INSERT INTO items (name, tipo, color, direccion, foto) VALUES (?, ?, ?, ?, ?)",
+        [name.trim(), tipo.trim(), color.trim(), direccion.trim(), locationString]
       );
 
       console.log("✅ Mascota guardada correctamente");
       
       // Agregar a Redux
       dispatch(addPet({
+        id: Date.now(),
         name: name.trim(),
         tipo: tipo.trim(),
         color: color.trim(),
         direccion: direccion.trim(),
+        foto: locationString,
         createdAt: new Date().toISOString()
       }));
 
-      Alert.alert("Éxito", "Mascota agregada correctamente");
+      Alert.alert("Éxito", "Mascota agregada con ubicación correctamente");
 
       // Limpiar formulario
       setName("");
       setTipo("");
       setColor("");
       setDireccion("");
+      setLatitude("");
+      setLongitude("");
 
-      // Volver a la pantalla anterior (opcional)
+      // Volver a la pantalla anterior
       if (navigation?.goBack) {
         navigation.goBack();
       }
@@ -75,6 +126,8 @@ export default function SubirScreen({ navigation }) {
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>📝 Reportar Mascota Perdida</Text>
+
         <TextInput 
           style={styles.input}
           placeholder="Nombre del animal"
@@ -83,6 +136,7 @@ export default function SubirScreen({ navigation }) {
           onChangeText={setName}
           editable={!loading}
         />
+
         <TextInput 
           style={styles.input}
           placeholder="Tipo de animal (Perro, Gato...)"
@@ -91,6 +145,7 @@ export default function SubirScreen({ navigation }) {
           onChangeText={setTipo}
           editable={!loading}
         />
+
         <TextInput 
           style={styles.input}
           placeholder="Color del animal"
@@ -99,19 +154,44 @@ export default function SubirScreen({ navigation }) {
           onChangeText={setColor}
           editable={!loading}
         />
+
+       
+
+        <Text style={styles.label}>📍 Coordenadas GPS</Text>
+
         <TextInput 
           style={styles.input}
-          placeholder="Dirección del animal"
+          placeholder="Latitud"
           placeholderTextColor="#999"
-          value={direccion}
-          onChangeText={setDireccion}
+          value={latitude}
+          onChangeText={setLatitude}
           editable={!loading}
+          keyboardType="decimal-pad"
+        />
+
+        <TextInput 
+          style={styles.input}
+          placeholder="Longitud"
+          placeholderTextColor="#999"
+          value={longitude}
+          onChangeText={setLongitude}
+          editable={!loading}
+          keyboardType="decimal-pad"
         />
 
         <Button 
-          title={loading ? "Guardando..." : "Guardar"} 
+          title={gettingLocation ? "Obteniendo..." : "📍 Obtener Mi Ubicación"} 
+          onPress={getLocation}
+          disabled={loading || gettingLocation}
+          color="#FF9500"
+        />
+
+        <View style={styles.spacer} />
+
+        <Button 
+          title={loading ? "Guardando..." : "💾 Guardar Mascota"} 
           onPress={handleSave}
-          disabled={loading}
+          disabled={loading || gettingLocation || !latitude || !longitude}
           color="#007AFF"
         />
       </ScrollView>

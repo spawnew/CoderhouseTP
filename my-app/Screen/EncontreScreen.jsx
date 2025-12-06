@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPets, removePet } from "../redux/slices/petsSlice";
 import { View, Text, Button, FlatList, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
-
-export default function HomeScreen() {
+import { useNavigation } from '@react-navigation/native';
+export default function EncontreScreen() {
   const dispatch = useDispatch();
   const db = useSQLiteContext();
   const { pets } = useSelector(state => state.pets);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+ const navigation = useNavigation();
   useEffect(() => {
     loadPets();
   }, []);
@@ -22,7 +22,7 @@ export default function HomeScreen() {
       console.log("📱 Cargando mascotas desde SQLite...");
       
       const result = await db.getAllAsync("SELECT * FROM items");
-      console.log("✅ Mascotas cargadas:", result);
+    
       
       dispatch(setPets(result || []));
     } catch (err) {
@@ -34,7 +34,7 @@ export default function HomeScreen() {
   };
 
   const handleDelete = (petId) => {
-    Alert.alert("Eliminar", "¿Estás seguro?", [
+    Alert.alert("fue encontrada ", "¿Estás seguro?", [
       { text: "Cancelar", onPress: () => {} },
       { 
         text: "Eliminar", 
@@ -54,9 +54,9 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={styles.centerContainer}>
+      <View >
         <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Cargando mascotas...</Text>
+        <Text >Cargando mascotas...</Text>
       </View>
     );
   }
@@ -80,37 +80,55 @@ export default function HomeScreen() {
   }
 
   return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Si ya no la estas buscando eliminala de la lista 🐾</Text>
     <FlatList
       data={pets}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
         <View style={styles.itemContainer}>
-          <Text style={styles.name}>🐾 {item.name}</Text>
-          <Text style={styles.location}>📍 {item.direccion || "Sin ubicación"}</Text>
-          <Text style={styles.tipo}>Tipo: {item.tipo}</Text>
-          <Text style={styles.color}>Color: {item.color}</Text>
+          <Text >🐾 {item.name}</Text>
+          <Text >📍 {item.direccion || "Sin ubicación"}</Text>
+          <Text >Tipo: {item.tipo}</Text>
+          <Text >Color: {item.color}</Text>
 
           <Button 
-            title="Eliminar" 
-            color="red"
+            title="ya la Encontré " 
+            color="#30cfffff"
             onPress={() => handleDelete(item.id)}
           />
         </View>
       )}
-      contentContainerStyle={styles.listContainer}
+  
       refreshing={loading}
       onRefresh={loadPets}
-    />
+      />
+      <Button 
+              title="Ir a Home 🐾"
+              onPress={() => navigation.navigate("Main")}
+              color="#054172ff"
+      />
+      </View>
   );
 }
 
 
 
 const styles = StyleSheet.create({
-    centerContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 20
-    },
+  container: {
+    flex: 1,
+   
+    alignItems: 'center',
+   
+    padding: 10,
+    paddingTop: 40,
+    paddingBottom: 40,
+    backgroundColor: '#edf0eeff',
+    flexWrap: "wrap",
+
+    alignContent: 'center',
+    flexDirection: "column",
+    
+    
+  },
 })
