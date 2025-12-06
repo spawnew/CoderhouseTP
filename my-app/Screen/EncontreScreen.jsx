@@ -73,8 +73,8 @@ export default function EncontreScreen() {
   if (pets.length === 0) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.emptyText}>📭 No hay mascotas registradas</Text>
-        <Text style={styles.subText}>Agrega una mascota desde "Subir"</Text>
+        <Text style={styles.title}>🐾 No hay mascotas registradas</Text>
+        <Text style={styles.title}>Agrega una mascota desde "Subir"🐾</Text>
       </View>
     );
   }
@@ -88,13 +88,13 @@ export default function EncontreScreen() {
       renderItem={({ item }) => (
         <View style={styles.itemContainer}>
           <Text >🐾 {item.name}</Text>
-          <Text >📍 {item.direccion || "Sin ubicación"}</Text>
+          <Text > {item.direccion || "Sin ubicación"}</Text>
           <Text >Tipo: {item.tipo}</Text>
           <Text >Color: {item.color}</Text>
 
           <Button 
             title="ya la Encontré " 
-            color="#30cfffff"
+            color="#1791f5ff"
             onPress={() => handleDelete(item.id)}
           />
         </View>
@@ -106,7 +106,8 @@ export default function EncontreScreen() {
       <Button 
               title="Ir a Home 🐾"
               onPress={() => navigation.navigate("Main")}
-              color="#054172ff"
+        color="#054172ff"
+        Styles={{width:"100%"}}
       />
       </View>
   );
@@ -125,10 +126,37 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     backgroundColor: '#edf0eeff',
     flexWrap: "wrap",
-
     alignContent: 'center',
     flexDirection: "column",
-    
-    
+  }  ,
+     itemContainer: {
+
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#007AFF',
+  
+   
   },
+  card: {
+  
+    marginRight: 10,
+    backgroundColor: '#eededeff',
+  },
+  centerContainer: {
+    flex: 1,
+    flexDirection: "column",
+    padding: 100,
+  },
+    title: {
+       fontWeight: 'bold',
+    fontSize: 30,
+    }
+
+
+  
 })

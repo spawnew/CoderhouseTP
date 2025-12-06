@@ -41,7 +41,8 @@ function DBInitializer() {
   useEffect(() => {
     const setupDB = async () => {
       try {
-        console.log("📱 Creando tabla...");
+        console.log("📱 Inicializando base de datos...");
+
         await db.execAsync(`
           CREATE TABLE IF NOT EXISTS items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,10 +50,14 @@ function DBInitializer() {
             tipo TEXT NOT NULL,
             color TEXT NOT NULL,
             direccion TEXT NOT NULL,
-            foto TEXT
+            foto TEXT,
+            email TEXT,
+            latitude REAL,
+            longitude REAL,
+            createdAt TEXT
           );
         `);
-        console.log("✅ Tabla creada correctamente");
+      
       } catch (error) {
         console.log("❌ Error al crear tabla:", error);
       }
@@ -63,6 +68,7 @@ function DBInitializer() {
 
   return null;
 }
+
 
 export default function App() {
   return (

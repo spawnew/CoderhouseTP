@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, TextInput, Button, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform, Text } from "react-native";
+import { View, TextInput, Button, StyleSheet, Alert, ScrollView, KeyboardAvoidingView, Platform, Text, Image } from "react-native";
 import { useDispatch } from "react-redux";
 import { addPet } from "../redux/slices/petsSlice";
 import { useSQLiteContext } from "expo-sqlite";
 import * as Location from 'expo-location';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function SubirScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -13,8 +14,11 @@ export default function SubirScreen({ navigation }) {
   const [tipo, setTipo] = useState("");
   const [color, setColor] = useState("");
   const [direccion, setDireccion] = useState("");
+  const [email, setEmail] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [photo, setPhoto] = useState(null);
+  const [photoBase64, setPhotoBase64] = useState(null);
   const [loading, setLoading] = useState(false);
   const [gettingLocation, setGettingLocation] = useState(false);
 
@@ -55,14 +59,52 @@ export default function SubirScreen({ navigation }) {
     }
   };
 
+  const pickImage = async () => {
+    try {
+      console.log("📸 Abriendo galería...");
+      
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.8,
+        base64: true,
+      });
+
+      if (!result.canceled) {
+        const uri = result.assets[0].uri;
+        const base64 = result.assets[0].base64;
+        
+        console.log("✅ Foto seleccionada:", uri);
+        console.log("✅ Base64 obtenido, tamaño:", base64?.length);
+        
+        setPhoto(uri);
+        setPhotoBase64(base64);
+      }
+    } catch (error) {
+      console.log("❌ Error al seleccionar foto:", error);
+      Alert.alert('Error', 'No se pudo seleccionar la foto');
+    }
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSave = async () => {
     if (!db) {
       Alert.alert("Error", "La base de datos no está disponible");
       return;
     }
 
-    if (!name.trim() || !tipo.trim() || !color.trim()) {
+    if (!name.trim() || !tipo.trim() || !color.trim() || !direccion.trim() || !email.trim()) {
       Alert.alert("Error", "Por favor completa todos los campos");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Por favor ingresa un email válido");
       return;
     }
 
@@ -71,17 +113,25 @@ export default function SubirScreen({ navigation }) {
       return;
     }
 
+    if (!photo || !photoBase64) {
+      Alert.alert("Error", "Por favor selecciona una foto de la mascota");
+      return;
+    }
+
     setLoading(true);
     try {
-      console.log("💾 Guardando mascota en SQLite...");
+      console.log("💾 Guardando mascota...");
       
-      // Guardar coordenadas como string
-      const locationString = `${latitude},${longitude}`;
-      
-      // Insertar en BD
+      const photoData = `data:image/jpeg;base64,${photoBase64}`;
+      const lat = parseFloat(latitude);
+      const lon = parseFloat(longitude);
+
+      console.log("📍 Guardando coordenadas - Lat:", lat, "Lon:", lon);
+
+      // Insertar en BD con coordenadas separadas
       await db.runAsync(
-        "INSERT INTO items (name, tipo, color, direccion, foto) VALUES (?, ?, ?, ?, ?)",
-        [name.trim(), tipo.trim(), color.trim(), direccion.trim(), locationString]
+        "INSERT INTO items (name, tipo, color, direccion, foto, email, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [name.trim(), tipo.trim(), color.trim(), direccion.trim(), photoData, email.trim(), lat, lon]
       );
 
       console.log("✅ Mascota guardada correctamente");
@@ -93,19 +143,25 @@ export default function SubirScreen({ navigation }) {
         tipo: tipo.trim(),
         color: color.trim(),
         direccion: direccion.trim(),
-        foto: locationString,
+        foto: photoData,
+        email: email.trim(),
+        latitude: lat,
+        longitude: lon,
         createdAt: new Date().toISOString()
       }));
 
-      Alert.alert("Éxito", "Mascota agregada con ubicación correctamente");
+      Alert.alert("Éxito", "Mascota agregada correctamente");
 
       // Limpiar formulario
       setName("");
       setTipo("");
       setColor("");
       setDireccion("");
+      setEmail("");
       setLatitude("");
       setLongitude("");
+      setPhoto(null);
+      setPhotoBase64(null);
 
       // Volver a la pantalla anterior
       if (navigation?.goBack) {
@@ -155,7 +211,51 @@ export default function SubirScreen({ navigation }) {
           editable={!loading}
         />
 
-       
+        <TextInput 
+          style={styles.input}
+          placeholder="Dirección o zona donde se perdió"
+          placeholderTextColor="#999"
+          value={direccion}
+          onChangeText={setDireccion}
+          editable={!loading}
+        />
+
+        <TextInput 
+          style={styles.input}
+          placeholder="📧 Tu email (para contacto)"
+          placeholderTextColor="#999"
+          value={email}
+          onChangeText={setEmail}
+          editable={!loading}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <Text style={styles.label}>📸 Foto de la mascota</Text>
+
+        {photo && (
+          <View style={styles.photoContainer}>
+            <Image 
+              source={{ uri: photo }} 
+              style={styles.photoPreview}
+            />
+            <Button 
+              title="❌ Cambiar foto"
+              onPress={pickImage}
+              disabled={loading}
+              color="#FF9500"
+            />
+          </View>
+        )}
+
+        {!photo && (
+          <Button 
+            title="📸 Seleccionar foto de galería"
+            onPress={pickImage}
+            disabled={loading}
+            color="#FF9500"
+          />
+        )}
 
         <Text style={styles.label}>📍 Coordenadas GPS</Text>
 
@@ -191,7 +291,7 @@ export default function SubirScreen({ navigation }) {
         <Button 
           title={loading ? "Guardando..." : "💾 Guardar Mascota"} 
           onPress={handleSave}
-          disabled={loading || gettingLocation || !latitude || !longitude}
+          disabled={loading || gettingLocation || !latitude || !longitude || !photo}
           color="#007AFF"
         />
       </ScrollView>

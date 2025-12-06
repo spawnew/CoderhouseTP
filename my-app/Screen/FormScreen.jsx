@@ -21,7 +21,7 @@ const FormScreen = ({ obtener }) => {
         value={nombre}
         onChangeText={setNombre}
       />
-      <Button title="Buscar" onPress={handleSubmit} color="#007AFF" />
+      <Button title="Buscar" onPress={handleSubmit} color="#1791f5ff" />
     </View>
   );
 };

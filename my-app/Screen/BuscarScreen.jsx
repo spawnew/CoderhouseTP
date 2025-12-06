@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { useSQLiteContext } from 'expo-sqlite';
 import FormScreen from './FormScreen';
@@ -21,14 +21,12 @@ const BuscarScreen = () => {
         let result;
 
         if (nombre.trim() === "") {
-          // Si está vacío, traer todos
           result = await db.getAllAsync("SELECT * FROM items");
           console.log("✅ Todos los items:", result);
         } else {
-          // Buscar con LIKE en la BD (más eficiente)
           result = await db.getAllAsync(
-            "SELECT * FROM items WHERE name LIKE ?",
-            [`%${nombre}%`]
+            "SELECT * FROM items WHERE name LIKE ? OR tipo LIKE ? OR color LIKE ?",
+            [`%${nombre}%`, `%${nombre}%`, `%${nombre}%`]
           );
           console.log("✅ Items filtrados por:", nombre, "Resultados:", result);
         }
@@ -47,7 +45,7 @@ const BuscarScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Buscar Mascota</Text>
+      <Text style={styles.title}>🔍 Buscar Mascota</Text>
       <FormScreen obtener={obtener} />
       
       {loading ? (
@@ -62,10 +60,19 @@ const BuscarScreen = () => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.itemContainer}>
+              {item.foto && (
+                <Image 
+                  source={{ uri: item.foto }} 
+                  style={styles.petImage}
+                />
+              )}
               <Text style={styles.itemText}>🐾 Nombre: {item.name}</Text>
               <Text style={styles.itemText}>Tipo: {item.tipo}</Text>
               <Text style={styles.itemText}>Color: {item.color}</Text>
               <Text style={styles.itemText}>Ubicación: {item.direccion}</Text>
+              {item.email && (
+                <Text style={styles.itemText}>📧 Email: {item.email}</Text>
+              )}
             </View>
           )}
         />
@@ -73,6 +80,8 @@ const BuscarScreen = () => {
     </View>
   );
 };
+
+
 
 export default BuscarScreen;
 
@@ -89,4 +98,13 @@ const styles = StyleSheet.create({
   },
   itemText: { fontSize: 14, marginVertical: 3, color: '#333' },
   noResults: { textAlign: 'center', marginTop: 20, fontSize: 16, color: '#999' },
+  title: {
+    paddingTop: 30,
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  itemText:{
+     fontWeight: 'bold',
+    fontSize: 15,
+  }
 });

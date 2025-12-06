@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, Button ,Image} from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, Button, Image, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { setPets } from '../redux/slices/petsSlice';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -31,6 +31,20 @@ export default function VerScreen() {
     }
   };
 
+  const handleViewMap = (item) => {
+    console.log("🗺️ Item:", item);
+    
+    if (item.latitude && item.longitude) {
+      console.log("✅ Coordenadas encontradas - Lat:", item.latitude, "Lon:", item.longitude);
+      setSelectedLocation({ 
+        latitude: item.latitude, 
+        longitude: item.longitude 
+      });
+    } else {
+      Alert.alert('Ubicación no disponible', 'Esta mascota no tiene coordenadas registradas');
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.center}>
@@ -49,50 +63,58 @@ export default function VerScreen() {
 
   return (
     <View style={styles.container}>
+      {selectedLocation && (
+        <View >
+          <MapPreview location={selectedLocation} />
+          <Button
+            title="❌ Cerrar mapa"
+            onPress={() => setSelectedLocation(null)}
+            color="#FF3B30"
+          />
+        </View>
+      )}
+
       <FlatList 
         data={pets}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.itemContainer}> 
-            <View style={styles.card}> 
-            <Text >Nombre🐾 {item.name}</Text>
-            <Text >Tipo: {item.tipo}</Text>
-            <Text >Color: {item.color}</Text>
-              
-              <Text >Ubicación: {item.foto}</Text>
+            {item.foto && item.foto.includes('base64') && (
+              <Image 
+                source={{ uri: item.foto }} 
+                style={styles.petImage}
+              />
+            )}
+            <Text >🐾 {item.name}</Text>
+            <Text style={styles.text}>Tipo: {item.tipo}</Text>
+            <Text style={styles.text}>Color: {item.color}</Text>
+            <Text style={styles.text}>Ubicación: {item.direccion}</Text>
+            {item.email && (
+              <Text style={styles.text}>📧 Email: {item.email}</Text>
+            )}
+            <View style={styles.buttonContainer}>
+              <Button
+                title="🗺️ Ver en mapa"
+                onPress={() => handleViewMap(item)}
+                color="#007AFF"
+              />
             </View>
-            <Button
-              title="Ver en mapa"
-              onPress={() => {
-                const [lat, lon] = item.foto?.split(',') || [null, null];
-                if (lat && lon) {
-                  setSelectedLocation({ latitude: parseFloat(lat), longitude: parseFloat(lon) });
-                }
-              }}
-              color="#073d1eff"
-            />
           </View>
         )}
       />
 
-      {selectedLocation && <MapPreview location={selectedLocation} />}
-
-      <Button 
+      <Button
         title="Ir a Home 🐾"
         onPress={() => navigation.navigate("Main")}
-        color="#054172ff"
+        color="#007AFF"
       />
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
-    
-   
-    padding: 10,
+  padding:10,
     paddingTop: 40,
     paddingBottom: 40,
     backgroundColor: '#edf0eeff',
@@ -103,13 +125,19 @@ const styles = StyleSheet.create({
     
     
   },
-
+ petImage: {
+    
+   height: 80,
+    width:80,
+    borderRadius: 8,
+    marginBottom: 10
+  },
   itemContainer: {
-
-    flexDirection: "row",
+    
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    padding: 100,
     marginBottom: 10,
     borderRadius: 8,
     borderWidth: 1,
@@ -121,5 +149,9 @@ const styles = StyleSheet.create({
   
     marginRight: 10,
     backgroundColor: '#eededeff',
+     title: {
+       fontWeight: 'bold',
+    fontSize: 15,
+    }
   },
 });

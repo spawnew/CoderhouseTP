@@ -38,23 +38,7 @@ const MapPreview = ({ location }) => {
           />
         )}
         
-        <Image
-          style={styles.mapImage}
-          source={{ uri: mapUrl }}
-          onLoadStart={() => {
-            console.log("📱 Cargando mapa...");
-            setLoading(true);
-          }}
-          onLoadEnd={() => {
-            console.log("✅ Mapa cargado");
-            setLoading(false);
-          }}
-          onError={(error) => {
-            console.log("❌ Error cargando mapa:", error);
-            setError(true);
-            setLoading(false);
-          }}
-        />
+       
 
         {error && (
           <View style={styles.errorOverlay}>
